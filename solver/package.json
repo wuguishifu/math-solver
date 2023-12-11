@@ -1,0 +1,19 @@
+{
+  "name": "solver",
+  "version": "1.0.0",
+  "description": "1. convert tex into plan equation text (PET)\r 2. convert PET into RPN\r 3. evaluate RPN\r 4. profit ? ?",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "dev": "ts-node ./dev.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

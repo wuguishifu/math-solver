@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "outDir": "dist",
+        "lib": [
+            "ES6",
+            "DOM"
+        ]
+    },
+    "include": [
+        "lib/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
