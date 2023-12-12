@@ -1,5 +1,5 @@
+import operators from './operators';
 import type { ASTNode } from './types';
-import { isToken } from './util';
 
 const nargs = {
     frac: 2,
@@ -100,9 +100,7 @@ export function infixToRPN(infix: ASTNode[]): ASTNode[] {
     const operatorStack = [];
 
     for (const token of infix) {
-        if (!isToken(token)) {
-            outputQueue.push(token);
-        } else if (!(token.token in precedence || token.token === 'left(' || token.token === 'right)')) {
+        if (!(token.token in precedence || token.token === 'left(' || token.token === 'right)')) {
             outputQueue.push(token);
         } else if (token.token in precedence) {
             while (
@@ -128,4 +126,12 @@ export function infixToRPN(infix: ASTNode[]): ASTNode[] {
     }
 
     return outputQueue;
+};
+
+export function evaluateAst(root: ASTNode): number {
+    if (root.token in operators) {
+        return operators[root.token](root.args?.map(evaluateAst));
+    }
+
+    return parseFloat(root.token);
 };
