@@ -1,7 +1,7 @@
-import { toAST } from './lib/ast';
+import { parseTex } from './lib/ast';
 
 {
-    const tex = "\\left(1+2";
-    const ast = toAST(tex);
+    const tex = "\\sqrt{4} + + 2";
+    const ast = parseTex(tex);
     console.log(JSON.stringify(ast, null, 2));
 }

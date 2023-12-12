@@ -1,5 +1,5 @@
-import { AST, Token } from "./types";
+import { ASTNode } from "./types";
 
-export function isToken(entry: Token | AST): entry is Token {
-    return (entry as Token).token !== undefined;
+export function isToken(entry: ASTNode): entry is ASTNode {
+    return (entry as ASTNode).token !== undefined;
 }

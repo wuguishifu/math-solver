@@ -1,6 +1,4 @@
-export type Token = {
+export type ASTNode = {
     token: string;
-    args?: AST;
+    args?: ASTNode[];
 }
-
-export type AST = (Token | AST)[];
