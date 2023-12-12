@@ -1,16 +1,26 @@
 import type { AST, Token } from './types';
 import { isToken } from './util';
+import operators from './operators';
 
 const nargs = {
     frac: 2,
-    sqrt: 1
-}
+    sqrt: 1,
+    sin: 1,
+    cos: 1,
+    tan: 1,
+    ln: 1,
+};
 
 const precedence = {
     '+': 1,
     '-': 1,
     'cdot': 2
-}
+};
+
+export function parseTex(input: string): AST {
+    if (input.match(/\\left\(/g)?.length !== input.match(/\\right\)/g)?.length) throw new Error('Unbalanced parens');
+    return toAST(input);
+};
 
 export function toAST(input: string): AST {
     const tokens: AST = [];
@@ -18,16 +28,6 @@ export function toAST(input: string): AST {
 
     // main parse step
     while (remaining.length) {
-        // if (remaining.startsWith('\\left(')) {
-        //     const match = remaining.match(/(\\left\(.*?\\right\))/);
-        //     if (!match) throw new Error('Unbalanced parens');
-        //     const subtree = match[1];
-        //     remaining = remaining.slice(subtree.length).trimStart();
-        //     tokens.push({
-        //         token: 'group',
-        //         args: toAST(subtree.slice(6, -7))
-        //     });
-        // } else if (remaining.startsWith('\\')) {
         if (remaining.startsWith('\\')) {
             const token = remaining.match(/^\\([a-zA-Z()\[\]]{0,})/)[1];
             remaining = remaining.slice(token.length + 1).trimStart();
@@ -67,7 +67,7 @@ export function toAST(input: string): AST {
             tokens.push({ token: remaining });
             break;
         } else {
-            const token = remaining.match(/(.*?)(?:\s|\\|\d|$|\{|\+|-)/)[0];
+            const token = remaining.match(/(.*?)(?:\s|\\|\d|$|\{|\+|\-)/)[0];
             tokens.push({ token: token.trim() });
             remaining = remaining.slice(token.length).trimStart();
         }
@@ -101,9 +101,20 @@ export function infixToRPNnaive(infix: AST): AST {
     const outputQueue = [];
     const operatorStack = [];
 
+    // check for unbalanced parens
+    let parens = 0;
     for (const token of infix) {
-        if (!isToken(token)) outputQueue.push(token);
-        if (!((token as Token).token in precedence)) {
+        if (!isToken(token)) continue;
+        if (token.token === 'left(') parens++;
+        else if (token.token === 'right)') parens--;
+    }
+
+    if (parens !== 0) throw new Error('Unbalanced parens');
+
+    for (const token of infix) {
+        if (!isToken(token)) {
+            outputQueue.push(token);
+        } else if (!((token as Token).token in precedence)) {
             outputQueue.push(token);
         } else if ((token as Token).token in precedence) {
             while (operatorStack.length && precedence[operatorStack[operatorStack.length - 1]] >= precedence[(token as Token).token]) {
@@ -125,10 +136,16 @@ export function infixToRPN(infix: AST): AST {
     const operatorStack = [];
 
     for (const token of infix) {
-        if (!isToken(token)) outputQueue.push(token);
-        else if (!(token.token in precedence || token.token === 'left(' || token.token === 'right)')) outputQueue.push(token);
-        else if (token.token in precedence) {
-            while (operatorStack.length > 0 && operatorStack[operatorStack.length - 1] !== 'left(' && precedence[operatorStack[operatorStack.length - 1]] >= precedence[token.token]) {
+        if (!isToken(token)) {
+            outputQueue.push(token);
+        } else if (!(token.token in precedence || token.token === 'left(' || token.token === 'right)')) {
+            outputQueue.push(token);
+        } else if (token.token in precedence) {
+            while (
+                operatorStack.length > 0 &&
+                operatorStack[operatorStack.length - 1] !== 'left(' &&
+                precedence[operatorStack[operatorStack.length - 1]] >= precedence[token.token]
+            ) {
                 outputQueue.push(operatorStack.pop());
             }
             operatorStack.push(token);
