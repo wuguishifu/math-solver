@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    font-family: Nunito, 'sans-serif';
+}
+
+.mq-editable-field {
+    outline: none;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.mq-focused {
+    outline: none;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+.mq-editable-field.mq-focused {
+    outline: none;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}

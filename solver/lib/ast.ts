@@ -13,6 +13,7 @@ const nargs = {
 const precedence = {
     '+': 1,
     '-': 1,
+    '^': 2,
     'cdot': 2
 };
 
@@ -62,7 +63,7 @@ export function toAST(input: string): ASTNode {
             root.push({ token: remaining });
             break;
         } else {
-            const token = remaining.match(/(.*?)(?:\s|\\|\d|$|\{|\+|\-)/)[0];
+            const token = remaining.match(/(.*?)(?:\s|\\|\d|$|\{|\+|\-|\^)/)[0];
             root.push({ token: token.trim() });
             remaining = remaining.slice(token.length).trimStart();
         }
